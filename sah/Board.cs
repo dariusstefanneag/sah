@@ -12,7 +12,7 @@ namespace sah
     {
         private const int BoardSize = 10;
         private const int CellSize = 50;
-       
+
 
         private readonly Form form;
         private Dictionary<string, Color> pieceColors;
@@ -31,7 +31,7 @@ namespace sah
         public Board(Form form)
         {
             this.form = form;
-            
+
 
             pieceColors = new Dictionary<string, Color>
 
@@ -82,7 +82,7 @@ namespace sah
 
         };
 
-
+            bool shouldDrawRange = false;
 
             InitializePiecePositions();
 
@@ -100,6 +100,7 @@ namespace sah
             canMovePlayer4 = true;
         }
 
+        bool shouldDrawRange = false;
         private void InitializePiecePositions()
         {
             piecePositions = new Dictionary<string, Point[]>
@@ -153,11 +154,38 @@ namespace sah
 
                     Brush brush = new SolidBrush(cellColor);
                     g.FillRectangle(brush, x, y, CellSize, CellSize);
-                   
+
                 }
             }
         }
+        List<Point> availableMoves(string pieceName, Point currentPosition)
+        {
+            List<Point> moves = new List<Point>();
+            for (int i = 0; i < Board.BoardSize; i++)
+            {
+                for (int j = 0; j < Board.BoardSize; j++)
+                {
+                    Point attempt = new Point(i, j);
+                    if (IsValidMove(pieceName, currentPosition, attempt))
+                    {
+                        moves.Add(attempt);
+                    }
+                }
+            }
+            return moves;
+        }
+        private void DrawRange(List<Point> points, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
 
+            Color white = Color.Yellow;
+            using (SolidBrush whiteBrush = new SolidBrush(white))
+                foreach (Point piesa in points)
+                {
+                    g.FillRectangle(whiteBrush, piesa.X * Board.CellSize, piesa.Y * Board.CellSize, Board.CellSize, Board.CellSize);
+                }
+
+        }
         private void DrawPieces(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
@@ -179,8 +207,12 @@ namespace sah
 
                 }
             }
-            
+            if (shouldDrawRange)
+            {
+                DrawRange(availableMovesToDraw, e);
+            }
         }
+        List<Point> availableMovesToDraw;
         private void HandleMouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -196,7 +228,9 @@ namespace sah
                         selectedPiece = GetPieceName(clickedPosition);
                         selectedPosition = clickedPosition;
                         isPieceSelected = true;
-
+                        availableMovesToDraw = availableMoves(GetPieceName(new Point(clickedPosition.X, clickedPosition.Y)), clickedPosition);
+                        shouldDrawRange = true;
+                        form.Refresh();
                     }
                 }
                 else
@@ -209,7 +243,8 @@ namespace sah
                         isPieceSelected = false;
                         currentPlayer = GetNextPlayer();
                         form.Invalidate();
-
+                        shouldDrawRange = false;
+                        availableMovesToDraw.Clear();
                     }
                 }
             }
@@ -251,7 +286,7 @@ namespace sah
             {
                 return IsPawnMoveValid(pieceName, currentPosition, targetPosition);
             }
-          
+
 
             return false;
         }
@@ -306,8 +341,8 @@ namespace sah
             return false; // Invalid move
         }
 
-  
-        
+
+
 
         private bool IsRookMoveValid(Point currentPosition, Point targetPosition)
         {
@@ -396,9 +431,6 @@ namespace sah
 
             return false; // Invalid move
         }
-
-       
-
 
         private bool IsCardinalMoveValid(Point currentPosition, Point targetPosition)
         {
@@ -497,8 +529,7 @@ namespace sah
 
                 if (pieceName.StartsWith("Pawn") && Math.Abs(targetPosition.Y - currentPosition.Y) == 2)
                 {
-                    // Handle pawn's double move
-                    // ...
+
                 }
 
                 if (piecePositions.ContainsKey(GetPieceName(targetPosition)))
@@ -551,6 +582,7 @@ namespace sah
             return string.Empty;
         }
 
+
         private string GetNextPlayer()
         {
             if (currentPlayer == "Player 1")
@@ -593,8 +625,12 @@ namespace sah
             return currentPlayer;
         }
 
+
+
     }
+
+
 }
 
-    
+
 
