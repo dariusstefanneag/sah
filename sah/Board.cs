@@ -299,7 +299,25 @@ namespace sah
             // The King can move one square in any direction (horizontal, vertical, or diagonal)
             if ((deltaX == 1 && deltaY == 0) || (deltaX == 0 && deltaY == 1) || (deltaX == 1 && deltaY == 1))
             {
-                return true; // Valid move
+                string targetName = GetPieceName(new Point(targetPosition.X, targetPosition.Y));
+                string currentName = GetPieceName(new Point(currentPosition.X, currentPosition.Y));
+                if (targetName.EndsWith("Yellow") && currentName.EndsWith("Yellow") == true)
+                {
+                    return false; // Path is blocked  
+                }
+                if (targetName.EndsWith("Red") && currentName.EndsWith("Red") == true)
+                {
+                    return false; // Path is blocked  
+                }
+                if (targetName.EndsWith("Green") && currentName.EndsWith("Green") == true)
+                {
+                    return false; // Path is blocked  
+                }
+                if (targetName.EndsWith("Black") && currentName.EndsWith("Black") == true)
+                {
+                    return false; // Path is blocked  
+                }
+               return true;
             }
 
             return false; // Invalid move
@@ -322,19 +340,47 @@ namespace sah
                 int stepX = Math.Sign(endX - startX);
                 int stepY = Math.Sign(endY - startY);
 
-                int x = startX + stepX;
-                int y = startY + stepY;
+                int x = startX;
+                int y = startY;
 
-                while (x != endX || y != endY)
+                do
                 {
-                    if (GetPieceName(new Point(x, y)) != null)
-                    {
-                        return false; // Path is blocked
-                    }
-
                     x += stepX;
                     y += stepY;
+                    if (GetPieceName(new Point(x, y)) != "")
+                    {
+                        string targetName = GetPieceName(new Point(x, y));
+                        string currentName = GetPieceName(new Point(currentPosition.X, currentPosition.Y));
+                        if (targetName.EndsWith("Yellow") && currentName.EndsWith("Yellow") == true)
+                        {
+                            return false; // Path is blocked  
+                        }
+                        if (targetName.EndsWith("Red") && currentName.EndsWith("Red") == true)
+                        {
+                            return false; // Path is blocked  
+                        }
+                        if (targetName.EndsWith("Green") && currentName.EndsWith("Green") == true)
+                        {
+                            return false; // Path is blocked  
+                        }
+                        if (targetName.EndsWith("Black") && currentName.EndsWith("Black") == true)
+                        {
+                            return false; // Path is blocked  
+                        }
+                        if (x == targetPosition.X && y == targetPosition.Y)
+                        {
+                            return true;
+
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
                 }
+                while (x != targetPosition.X && y != targetPosition.Y);
+
+
 
                 return true; // Valid move
             }
@@ -361,26 +407,85 @@ namespace sah
                 if (deltaX > 0) // Horizontal movement
                 {
                     int stepX = Math.Sign(endX - startX);
-                    for (int x = startX + stepX; x != endX; x += stepX)
+                    int x = startX;
+                   do
                     {
-                        if (GetPieceName(new Point(x, startY)) != null)
+                        x += stepX;
+                        if (GetPieceName(new Point(x, startY)) != "")
                         {
-                            return false; // Path is blocked
+                            string targetName = GetPieceName(new Point(x, startY));
+                            string currentName = GetPieceName(new Point(currentPosition.X, currentPosition.Y));
+                            if (targetName.EndsWith("Yellow") && currentName.EndsWith("Yellow") == true)
+                            {
+                                return false; // Path is blocked  
+                            }
+                            if (targetName.EndsWith("Red") && currentName.EndsWith("Red") == true)
+                            {
+                                return false; // Path is blocked  
+                            }
+                            if (targetName.EndsWith("Green") && currentName.EndsWith("Green") == true)
+                            {
+                                return false; // Path is blocked  
+                            }
+                            if (targetName.EndsWith("Black") && currentName.EndsWith("Black") == true)
+                            {
+                                return false; // Path is blocked  
+                            }
+                            if (x == targetPosition.X)
+                            {
+                                return true;
+
+                            }
+                            else
+                            {
+                                return false;
+                            }
                         }
                     }
+                    while (x != targetPosition.X) ;
                 }
                 else // Vertical movement
                 {
                     int stepY = Math.Sign(endY - startY);
-                    for (int y = startY + stepY; y != endY; y += stepY)
+                    int y = startY;
+                    do 
                     {
-                        if (GetPieceName(new Point(startX, y)) != null)
+                        y+= stepY;
+
+                        if (GetPieceName(new Point(startX, y)) != "")
                         {
-                            return false; // Path is blocked
+                            string targetName = GetPieceName(new Point(startX, y));
+                            string currentName = GetPieceName(new Point(currentPosition.X, currentPosition.Y));
+                            if (targetName.EndsWith("Yellow") && currentName.EndsWith("Yellow") == true)
+                            {
+                                return false; // Path is blocked  
+                            }
+                            if (targetName.EndsWith("Red") && currentName.EndsWith("Red") == true)
+                            {
+                                return false; // Path is blocked  
+                            }
+                            if (targetName.EndsWith("Green") && currentName.EndsWith("Green") == true)
+                            {
+                                return false; // Path is blocked  
+                            }
+                            if (targetName.EndsWith("Black") && currentName.EndsWith("Black") == true)
+                            {
+                                return false; // Path is blocked  
+                            }
+                            if ( y == targetPosition.Y)
+                            {
+                                return true;
+
+                            }
+                            else
+                            {
+                                return false;
+                            }
                         }
                     }
+                    while (y != targetPosition.Y);
                 }
-
+             
                 return true; // Valid move
             }
 
@@ -389,6 +494,7 @@ namespace sah
 
         private bool IsBishopMoveValid(Point currentPosition, Point targetPosition)
         {
+           
             int deltaX = Math.Abs(targetPosition.X - currentPosition.X);
             int deltaY = Math.Abs(targetPosition.Y - currentPosition.Y);
 
@@ -398,21 +504,50 @@ namespace sah
                 int stepX = Math.Sign(targetPosition.X - currentPosition.X);
                 int stepY = Math.Sign(targetPosition.Y - currentPosition.Y);
 
-                int x = currentPosition.X + stepX;
-                int y = currentPosition.Y + stepY;
-
-                while (x != targetPosition.X && y != targetPosition.Y)
+                int x = currentPosition.X;
+                int y = currentPosition.Y;
+                do
                 {
-                    if (GetPieceName(new Point(x, y)) != null)
-                    {
-                        return false; // Path is blocked
-                    }
-
                     x += stepX;
                     y += stepY;
-                }
+                    if (GetPieceName(new Point(x, y)) != "")
+                    {
+                        string targetName = GetPieceName(new Point(x, y));
+                        string currentName = GetPieceName(new Point(currentPosition.X, currentPosition.Y));
+                        if (targetName.EndsWith("Yellow") && currentName.EndsWith("Yellow")==true)
+                        {
+                            return false; // Path is blocked  
+                        }
+                        if (targetName.EndsWith("Red") && currentName.EndsWith("Red")== true)
+                        {
+                            return false; // Path is blocked  
+                        }
+                        if (targetName.EndsWith("Green") && currentName.EndsWith("Green") == true)
+                        {
+                            return false; // Path is blocked  
+                        }
+                        if (targetName.EndsWith("Black") &&   currentName.EndsWith("Black") == true)
+                        {
+                            return false; // Path is blocked  
+                        }
+                        if(x==targetPosition.X && y == targetPosition.Y)
+                        {
+                            return true;
 
-                return true; // Valid move
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    
+
+                   
+                }
+                while (x != targetPosition.X && y != targetPosition.Y);
+
+
+                    return true; // Valid move
             }
 
             return false; // Invalid move
@@ -426,7 +561,29 @@ namespace sah
             // Knights move in an L-shape pattern: two squares in one direction and one square perpendicular to it
             if ((deltaX == 2 && deltaY == 1) || (deltaX == 1 && deltaY == 2))
             {
-                return true; // Valid move
+                string targetName = GetPieceName(new Point(targetPosition.X,targetPosition.Y));
+                string currentName = GetPieceName(new Point(currentPosition.X, currentPosition.Y));
+                if (targetName.EndsWith("Yellow") && currentName.EndsWith("Yellow") == true)
+                {
+                    return false; // Path is blocked  
+                }
+                if (targetName.EndsWith("Red") && currentName.EndsWith("Red") == true)
+                {
+                    return false; // Path is blocked  
+                }
+                if (targetName.EndsWith("Green") && currentName.EndsWith("Green") == true)
+                {
+                    return false; // Path is blocked  
+                }
+                if (targetName.EndsWith("Black") && currentName.EndsWith("Black") == true)
+                {
+                    return false; // Path is blocked  
+                }
+                
+                
+                    return true;
+
+               
             }
 
             return false; // Invalid move
@@ -469,9 +626,31 @@ namespace sah
 
             return false; // Invalid move
         }
-
+        private bool validPiecePawn(Point currentPosition, Point targetPosition)
+        {
+            string targetName = GetPieceName(new Point(targetPosition.X,targetPosition.Y));
+            string currentName = GetPieceName(new Point(currentPosition.X, currentPosition.Y));
+            if (targetName.EndsWith("Yellow") && currentName.EndsWith("Yellow") == true)
+            {
+                return false; // Path is blocked  
+            }
+            if (targetName.EndsWith("Red") && currentName.EndsWith("Red") == true)
+            {
+                return false; // Path is blocked  
+            }
+            if (targetName.EndsWith("Green") && currentName.EndsWith("Green") == true)
+            {
+                return false; // Path is blocked  
+            }
+            if (targetName.EndsWith("Black") && currentName.EndsWith("Black") == true)
+            {
+                return false; // Path is blocked  
+            }
+          return true;
+        }
         private bool IsPawnMoveValid(string pieceName, Point currentPosition, Point targetPosition)
         {
+            
             int deltaX = Math.Abs(targetPosition.X - currentPosition.X);
             int deltaY = Math.Abs(targetPosition.Y - currentPosition.Y);
 
@@ -481,21 +660,21 @@ namespace sah
             {
                 if (targetPosition.X < currentPosition.X) // Moving towards the opponent's side
                 {
-                    return true; // Valid move
+                    return validPiecePawn(currentPosition,targetPosition); // Valid move
                 }
             }
             else if ((deltaX == 1 && deltaY == 0) && currentPlayer.StartsWith("Player 3")) // Player 3's pawns can only move forward
             {
                 if (targetPosition.X > currentPosition.X) // Moving towards the opponent's side
                 {
-                    return true; // Valid move
+                    return validPiecePawn(currentPosition, targetPosition); // Valid move
                 }
             }
             else if ((deltaX == 0 && deltaY == 1) && (currentPlayer.StartsWith("Player 2") || currentPlayer.StartsWith("Player 4"))) // Player 2 and Player 4's pawns can only move vertically
             {
                 if (targetPosition.Y < currentPosition.Y) // Moving towards the opponent's side
                 {
-                    return true; // Valid move
+                    return validPiecePawn(currentPosition, targetPosition); // Valid move
                 }
             }
             else if (deltaX == 1 && deltaY == 1) // Pawn capture diagonally
@@ -503,7 +682,7 @@ namespace sah
                 string capturedPiece = GetPieceName(targetPosition);
                 if (capturedPiece != null && !capturedPiece.StartsWith(currentPlayer.Substring(0, 6))) // Check if the target position has an opponent's piece
                 {
-                    return true; // Valid capture
+                    return validPiecePawn(currentPosition, targetPosition); // Valid capture
                 }
             }
 
@@ -515,28 +694,40 @@ namespace sah
             // Update the piecePositions dictionary accordingly
             // Implement the logic for capturing opponent pieces if necessary
             // ...
+
+            if (string.Empty != (GetPieceName(targetPosition)))
+            {
+                Point[] new_buffer = new Point[piecePositions[GetPieceName(targetPosition)].Length-1];
+                int i = 0;
+                foreach (Point element in piecePositions[GetPieceName(targetPosition)])
+                {
+                    if (element != targetPosition)
+                    {
+                        new_buffer[i++] = element;
+                    }
+                }
+                piecePositions[GetPieceName(targetPosition)] = new_buffer;
+            }
+
             if (piecePositions.ContainsKey(pieceName))
             {
                 Point[] positions = piecePositions[pieceName];
-                for (int i = 0; i < positions.Length; i++)
-                {
+               for (int i = 0; i < positions.Length; i++)
+                { 
+                    
+
                     if (positions[i] == currentPosition)
                     {
                         positions[i] = targetPosition;
                         break;
                     }
                 }
+              
+                
+               
 
-                if (pieceName.StartsWith("Pawn") && Math.Abs(targetPosition.Y - currentPosition.Y) == 2)
-                {
-
-                }
-
-                if (piecePositions.ContainsKey(GetPieceName(targetPosition)))
-                {
-                    // Capture opponent's piece
-                    // ...
-                }
+               
+               
             }
         }
 
